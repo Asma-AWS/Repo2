@@ -1,22 +1,61 @@
-
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import { createDrawerNavigator, DrawerNavigatorItems } from 'react-navigation-drawer';
+import { View, SafeAreaView } from 'react-native'
+import MenuListScreen from './src/screens/MenuListScreen';
+import { Provider as DishProvider } from './src/context/DishContext';
+import AboutusScreen from './src/screens/AboutusScreen';
+import ContactusScreen from './src/screens/ContactusScreen';
+import MenuDetailScreen from './src/screens/MenuDetailScreen';
 
-import { Provider } from './src/context/FeedbackContext';
+const menuList = createStackNavigator({
+  MenuList: MenuListScreen,
+  MenuDetail: MenuDetailScreen
+});
 
-import NavDrawer from "./src/routes/NavDrawer";
-
-function App() { 
-
-  return(
-    <NavigationContainer>
-        <NavDrawer/>
-    </NavigationContainer>
-  );
+menuList.navigationOptions = {
+  title: 'Menu'
 };
 
-export default () => {
-  return <Provider>
-    <App/>
-  </Provider>
+const aboutUs = createStackNavigator({
+  Aboutus: AboutusScreen
+})
+
+aboutUs.navigationOptions = {
+  title: 'About Us'
 }
+
+const contactUs = createStackNavigator({
+  Contactus: ContactusScreen
+})
+
+contactUs.navigationOptions = {
+  title: 'Contact Us'
+}
+
+const navigator = createDrawerNavigator({
+  menuList,
+  aboutUs,
+  contactUs
+}, {
+  contentComponent: props => {
+    return (
+      <View style={{ flex: 1, paddingTop: 30 }}>
+        <SafeAreaView forceInset={{ tope: 'always', horizontal: 'never' }}>
+          <DrawerNavigatorItems {...props} />
+        </SafeAreaView>
+      </View>
+    );
+  }
+})
+
+const App = createAppContainer(navigator);
+
+export default () => {
+  return (
+    <DishProvider>
+      <App />
+    </DishProvider>
+  );
+};
